@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幼师偷懒神器 - AI辅助工具</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🎨 幼师偷懒神器</h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-tool="observation">自主游戏观察表</button>
+                <button class="nav-btn" data-tool="course">月课程生成器</button>
+                <button class="nav-btn" data-tool="case">游戏案例生成器</button>
+                <button class="nav-btn" data-tool="story">课程故事生成器</button>
+                <button class="nav-btn" data-tool="storyDesign">课程故事设计</button>
+                <button class="nav-btn" data-tool="oneOnOne">一对一倾听</button>
+                <button class="nav-btn" data-tool="drawing">表征小人绘画器</button>
+            </nav>
+            <button class="settings-btn" id="settingsBtn">⚙️ 服务状态</button>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 步骤1：输入信息 -->
+            <div class="card step-card" id="step1">
+                <div class="card-header">
+                    <span class="step-number">步骤 1</span>
+                    <h2>填写游戏观察信息</h2>
+                </div>
+                <form id="observationForm" class="form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gameName">游戏名称 <span class="required">*</span></label>
+                            <input type="text" id="gameName" name="gameName" placeholder="例如：建构区搭建城堡" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="observer">观察对象 <span class="required">*</span></label>
+                            <input type="text" id="observer" name="observer" placeholder="例如：张小明" required>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="observeDate">观察时间 <span class="required">*</span></label>
+                            <input type="date" id="observeDate" name="observeDate" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="ageGroup">观察年龄 <span class="required">*</span></label>
+                            <select id="ageGroup" name="ageGroup" required>
+                                <option value="">请选择</option>
+                                <option value="小班">小班 (3-4岁)</option>
+                                <option value="中班">中班 (4-5岁)</option>
+                                <option value="大班">大班 (5-6岁)</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">观察地点 <span class="required">*</span></label>
+                            <input type="text" id="location" name="location" placeholder="例如：建构区" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="method">观察方式 <span class="required">*</span></label>
+                            <select id="method" name="method" required>
+                                <option value="">请选择</option>
+                                <option value="定点观察">定点观察</option>
+                                <option value="追踪观察">追踪观察</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="frequency">观察方法 <span class="required">*</span></label>
+                            <select id="frequency" name="frequency" required>
+                                <option value="">请选择</option>
+                                <option value="单次观察">单次观察</option>
+                                <option value="多次观察">多次观察</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="photo">观察照片 (可选)</label>
+                            <input type="file" id="photo" name="photo" accept="image/*">
+                            <span class="helper-text">支持jpg、png格式</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetBtn">重置表单</button>
+                        <button type="submit" class="btn btn-primary" id="generateBtn">
+                            <span class="btn-text">✨ 生成观察表</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span> AI正在生成中...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 月课程生成器表单 -->
+            <div class="card step-card" id="courseCard" style="display: none;">
+                <div class="card-header">
+                    <span class="step-number">步骤 1</span>
+                    <h2>填写月课程信息</h2>
+                </div>
+                <form id="courseForm" class="form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="courseMonth">月份 <span class="required">*</span></label>
+                            <input type="month" id="courseMonth" name="courseMonth" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="courseAgeGroup">年龄班 <span class="required">*</span></label>
+                            <select id="courseAgeGroup" name="courseAgeGroup" required>
+                                <option value="">请选择</option>
+                                <option value="小班">小班 (3-4岁)</option>
+                                <option value="中班">中班 (4-5岁)</option>
+                                <option value="大班">大班 (5-6岁)</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="courseTheme">主题名称 <span class="required">*</span></label>
+                            <input type="text" id="courseTheme" name="courseTheme" placeholder="例如：美丽的春天" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="courseFocus">重点领域 <span class="required">*</span></label>
+                            <select id="courseFocus" name="courseFocus" required>
+                                <option value="">请选择</option>
+                                <option value="健康">健康</option>
+                                <option value="语言">语言</option>
+                                <option value="社会">社会</option>
+                                <option value="科学">科学</option>
+                                <option value="艺术">艺术</option>
+                                <option value="综合">综合</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="courseGoals">课程目标 (可选)</label>
+                            <textarea id="courseGoals" name="courseGoals" rows="3" placeholder="例如：培养幼儿对自然的观察力和热爱..."></textarea>
+                            <span class="helper-text">可以简要描述本月课程的主要目标</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetCourseBtn">重置表单</button>
+                        <button type="submit" class="btn btn-primary" id="generateCourseBtn">
+                            <span class="btn-text">✨ 生成月课程</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span> AI正在生成中...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 游戏案例生成器表单 -->
+            <div class="card step-card" id="caseCard" style="display: none;">
+                <div class="card-header">
+                    <span class="step-number">步骤 1</span>
+                    <h2>填写游戏案例信息</h2>
+                </div>
+                <form id="caseForm" class="form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="caseGameName">游戏名称 <span class="required">*</span></label>
+                            <input type="text" id="caseGameName" name="caseGameName" placeholder="例如：角色区医院游戏" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="caseAgeGroup">适合年龄 <span class="required">*</span></label>
+                            <select id="caseAgeGroup" name="caseAgeGroup" required>
+                                <option value="">请选择</option>
+                                <option value="小班">小班 (3-4岁)</option>
+                                <option value="中班">中班 (4-5岁)</option>
+                                <option value="大班">大班 (5-6岁)</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="caseType">游戏类型 <span class="required">*</span></label>
+                            <select id="caseType" name="caseType" required>
+                                <option value="">请选择</option>
+                                <option value="角色游戏">角色游戏</option>
+                                <option value="建构游戏">建构游戏</option>
+                                <option value="表演游戏">表演游戏</option>
+                                <option value="规则游戏">规则游戏</option>
+                                <option value="美工游戏">美工游戏</option>
+                                <option value="益智游戏">益智游戏</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="caseDuration">游戏时长 <span class="required">*</span></label>
+                            <select id="caseDuration" name="caseDuration" required>
+                                <option value="">请选择</option>
+                                <option value="15-20分钟">15-20分钟</option>
+                                <option value="20-30分钟">20-30分钟</option>
+                                <option value="30-40分钟">30-40分钟</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="caseKeyPoints">重点说明 (可选)</label>
+                            <textarea id="caseKeyPoints" name="caseKeyPoints" rows="3" placeholder="例如：重点培养幼儿的社交能力和角色意识..."></textarea>
+                            <span class="helper-text">可以说明游戏的重点和特色</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetCaseBtn">重置表单</button>
+                        <button type="submit" class="btn btn-primary" id="generateCaseBtn">
+                            <span class="btn-text">✨ 生成游戏案例</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span> AI正在生成中...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 课程故事生成器表单 -->
+            <div class="card step-card" id="storyCard" style="display: none;">
+                <div class="card-header">
+                    <span class="step-number">步骤 1</span>
+                    <h2>填写课程故事信息</h2>
+                </div>
+                <form id="storyForm" class="form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="storyTitle">故事主题 <span class="required">*</span></label>
+                            <input type="text" id="storyTitle" name="storyTitle" placeholder="例如：小蝌蚪找妈妈" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="storyAgeGroup">适合年龄 <span class="required">*</span></label>
+                            <select id="storyAgeGroup" name="storyAgeGroup" required>
+                                <option value="">请选择</option>
+                                <option value="小班">小班 (3-4岁)</option>
+                                <option value="中班">中班 (4-5岁)</option>
+                                <option value="大班">大班 (5-6岁)</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="storyArea">领域 <span class="required">*</span></label>
+                            <select id="storyArea" name="storyArea" required>
+                                <option value="">请选择</option>
+                                <option value="健康">健康</option>
+                                <option value="语言">语言</option>
+                                <option value="社会">社会</option>
+                                <option value="科学">科学</option>
+                                <option value="艺术">艺术</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="storyDate">活动日期 <span class="required">*</span></label>
+                            <input type="date" id="storyDate" name="storyDate" required>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="storyHighlight">活动亮点 (可选)</label>
+                            <textarea id="storyHighlight" name="storyHighlight" rows="3" placeholder="例如：幼儿表现出强烈的探索欲望，主动提出问题..."></textarea>
+                            <span class="helper-text">可以描述活动中的精彩瞬间或特别之处</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetStoryBtn">重置表单</button>
+                        <button type="submit" class="btn btn-primary" id="generateStoryBtn">
+                            <span class="btn-text">✨ 生成课程故事</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span> AI正在生成中...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 课程故事设计表单 -->
+            <div class="card step-card" id="storyDesignCard" style="display: none;">
+                <div class="card-header">
+                    <span class="step-number">步骤 1</span>
+                    <h2>填写课程故事设计信息</h2>
+                </div>
+                <form id="storyDesignForm" class="form">
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="designTheme">课程主题 <span class="required">*</span></label>
+                            <input type="text" id="designTheme" name="designTheme" placeholder="例如：奇妙的电器大冒险" required>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="designBackground">故事背景 (可选)</label>
+                            <textarea id="designBackground" name="designBackground" rows="4" placeholder="例如：在电器国度里，每天电器们都很忙碌...可以描述故事发生的背景、场景等"></textarea>
+                            <span class="helper-text">可以描述故事发生的背景、情境等，AI会根据这些信息生成更贴合的故事</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="designObjectives">故事梗概 (可选)</label>
+                            <textarea id="designObjectives" name="designObjectives" rows="4" placeholder="例如：讲述一群电器通过合作解决问题的故事..."></textarea>
+                            <span class="helper-text">简要描述故事的主要情节或想要传达的内容</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetStoryDesignBtn">重置表单</button>
+                        <button type="submit" class="btn btn-primary" id="generateStoryDesignBtn">
+                            <span class="btn-text">✨ 生成故事设计</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span> AI正在生成中...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 一对一倾听表单 -->
+            <div class="card step-card" id="oneOnOneCard" style="display: none;">
+                <div class="card-header">
+                    <span class="step-number">步骤 1</span>
+                    <h2>填写一对一倾听信息</h2>
+                </div>
+                <form id="oneOnOneForm" class="form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="oneObserver">观察对象 <span class="required">*</span></label>
+                            <input type="text" id="oneObserver" name="oneObserver" placeholder="例如：小明" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="oneGroup">班级 <span class="required">*</span></label>
+                            <select id="oneGroup" name="oneGroup" required>
+                                <option value="">请选择</option>
+                                <option value="小班">小班</option>
+                                <option value="中班">中班</option>
+                                <option value="大班">大班</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="onePlace">地点 <span class="required">*</span></label>
+                            <input type="text" id="onePlace" name="onePlace" placeholder="例如：户外" required>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="oneActivity">观察活动 <span class="required">*</span></label>
+                            <input type="text" id="oneActivity" name="oneActivity" placeholder="例如：班级游戏" required>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="oneTest">观察测试 (可选)</label>
+                            <textarea id="oneTest" name="oneTest" rows="3" placeholder="例如：会通过哪些方式表达自己的想法..."></textarea>
+                            <span class="helper-text">可以描述想要观察的重点内容或测试方向</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="onePhoto">本地上传</label>
+                            <input type="file" id="onePhoto" name="onePhoto" accept="image/*">
+                            <span class="helper-text">支持jpg、png格式</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetOneOnOneBtn">重置表单</button>
+                        <button type="submit" class="btn btn-primary" id="generateOneOnOneBtn">
+                            <span class="btn-text">✨ 生成倾听记录</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span> AI正在生成中...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 表征小人绘画器表单 -->
+            <div class="card step-card" id="drawingCard" style="display: none;">
+                <div class="card-header">
+                    <span class="step-number">步骤 1</span>
+                    <h2>填写表征小人绘画信息</h2>
+                </div>
+                <form id="drawingForm" class="form">
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label for="drawingDesc">形象描述 <span class="required">*</span></label>
+                            <textarea id="drawingDesc" name="drawingDesc" rows="3" placeholder="例如：一个小女孩左手扶着碗，右手拿着勺子大口吃饭，穿着黄色衣服，面带微笑" required></textarea>
+                            <span class="error-message"></span>
+                            <span class="helper-text">详细描述想要绘制的小人形象、动作、服饰等特征。💡 使用智谱AI CogView免费生成图片，无需额外费用！</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="drawingStyle">风格 <span class="required">*</span></label>
+                            <select id="drawingStyle" name="drawingStyle" required>
+                                <option value="">请选择</option>
+                                <option value="彩铅">彩铅</option>
+                                <option value="水彩">水彩</option>
+                                <option value="彩铅水彩混合">彩铅水彩混合</option>
+                                <option value="黑白">黑白</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="drawingLine">线条 <span class="required">*</span></label>
+                            <select id="drawingLine" name="drawingLine" required>
+                                <option value="">请选择</option>
+                                <option value="粗">粗</option>
+                                <option value="细">细</option>
+                            </select>
+                            <span class="error-message"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="resetDrawingBtn">重置表单</button>
+                        <button type="submit" class="btn btn-primary" id="generateDrawingBtn">
+                            <span class="btn-text">🎨 生成小人图片</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="spinner"></span> AI正在生成图片...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 步骤2：生成结果 -->
+            <div class="card step-card" id="step2" style="display: none;">
+                <div class="card-header">
+                    <span class="step-number">步骤 2</span>
+                    <h2>生成的观察表</h2>
+                </div>
+                <div class="result-content" id="resultContent">
+                    <!-- AI生成的内容将显示在这里 -->
+                </div>
+                <div class="result-actions">
+                    <button class="btn btn-secondary" id="copyBtn">📋 复制文本</button>
+                    <button class="btn btn-secondary" id="exportPdfBtn">📄 导出PDF</button>
+                    <button class="btn btn-secondary" id="exportWordBtn">📝 导出Word</button>
+                    <button class="btn btn-primary" id="regenerateBtn">🔄 重新生成</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- API配置对话框 -->
+    <div class="modal" id="settingsModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>API配置</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="apiProvider">AI服务商</label>
+                    <select id="apiProvider" name="apiProvider">
+                        <option value="deepseek">DeepSeek (推荐)</option>
+                        <option value="openai">OpenAI (GPT-4)</option>
+                        <option value="zhipu">智谱AI (GLM-4)</option>
+                        <option value="custom">自定义服务</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="apiKey">API密钥</label>
+                    <input type="password" id="apiKey" name="apiKey" placeholder="请输入您的API密钥">
+                    <span class="helper-text">已部署到云端代理后通常无需填写此项（密钥在服务器环境变量中）</span>
+                </div>
+
+                <div class="form-group" id="customUrlGroup" style="display: none;">
+                    <label for="apiUrl">API地址</label>
+                    <input type="text" id="apiUrl" name="apiUrl" placeholder="https://api.example.com/v1/chat/completions">
+                </div>
+
+                <div class="form-group">
+                    <label for="apiModel">模型</label>
+                    <input type="text" id="apiModel" name="apiModel" placeholder="gpt-4" value="gpt-4">
+                </div>
+
+                <div class="form-group">
+                    <label for="actualApiUrl">当前实际使用的API地址</label>
+                    <input type="text" id="actualApiUrl" readonly>
+                    <span class="helper-text">会根据服务商和自定义地址自动更新</span>
+                </div>
+
+                <div class="test-result" id="testResult" style="display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="testConnectionBtn">测试连接</button>
+                <button class="btn btn-secondary" id="clearConfigBtn">清除配置</button>
+                <button class="btn btn-primary" id="saveConfigBtn">保存配置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 引入外部库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.min.js"></script>
+
+    <!-- 引入JavaScript -->
+    <script src="js/ai-service.js"></script>
+    <script src="js/form-handler.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
