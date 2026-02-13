@@ -495,30 +495,36 @@ class AIService {
      * 构建图像生成提示词（智谱AI CogView）
      */
     buildImagePrompt(formData) {
-        // 风格映射（中文）
+        // 风格映射：优先强调“3岁幼儿涂鸦感”，弱化专业插画感
         const styleMap = {
-            '彩铅': '彩色铅笔画',
-            '水彩': '水彩画',
-            '彩铅水彩混合': '彩铅水彩混合风格',
-            '黑白': '纯黑白铅笔素描'
+            '彩铅': '3岁幼儿彩铅涂鸦风，蜡笔/马克笔质感，少量不均匀上色',
+            '水彩': '3岁幼儿水彩涂抹风，颜色轻微外溢，笔触稚拙',
+            '彩铅水彩混合': '3岁幼儿彩铅+水彩混合涂鸦风，线条与涂抹都较随意',
+            '黑白': 'simple black and white line drawing, toddler doodle style, white background, no shading, no colors'
         };
 
-        // 线条映射（中文）
+        // 线条映射：增加抖动、笨拙、原始感
         const lineMap = {
-            '粗': '粗线条',
-            '细': '细线条'
+            '粗': 'thick black outlines, naive and shaky strokes',
+            '细': 'thin but shaky childlike lines, uneven hand-drawn strokes'
         };
 
-        const style = styleMap[formData.drawingStyle] || '简笔画';
-        const line = lineMap[formData.drawingLine] || '中等线条';
+        const style = styleMap[formData.drawingStyle] || '3岁幼儿简笔涂鸦风';
+        const line = lineMap[formData.drawingLine] || 'naive and shaky strokes';
 
-        // 如果是黑白风格，特别强调只使用黑白色
         const colorInstruction = formData.drawingStyle === '黑白'
-            ? '，画面只使用黑色和白色，不要任何彩色，纯黑白灰度图像，monochrome'
-            : '';
+            ? '只保留黑白线稿，不要灰阶明暗，不要任何彩色'
+            : '颜色使用幼儿涂鸦常见的简单配色，避免精细渐变与写实光影';
 
-        // 构建中文提示词（智谱AI支持中文提示词效果更好）
-        return `${style}风格的儿童插画，${line}，画面内容：${formData.drawingDesc}${colorInstruction}。适合幼儿园教学使用，简洁清晰的构图，可爱友好的角色设计，白色背景，适合3-6岁幼儿。`;
+        // 负向约束：明确排除“成人专业插画”特征
+        const negativeInstruction = '禁止写实、禁止3D、禁止照片风、禁止复杂透视、禁止精细解剖、禁止高细节背景、禁止专业排线';
+
+        return `画面主体：${formData.drawingDesc}。
+风格要求：${style}，${line}，childlike and primitive art，crayon or marker sketch texture。
+年龄感要求：看起来像3岁小朋友亲手画的，比例可略夸张，形状简化，允许不稳定和笨拙感。
+构图要求：主体居中，白色背景，元素尽量少，画面简洁。
+色彩要求：${colorInstruction}。
+约束要求：${negativeInstruction}。`;
     }
 
     /**
