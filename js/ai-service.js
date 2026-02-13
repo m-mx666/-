@@ -11,11 +11,12 @@ class AIService {
      */
     getDefaultConfig() {
         return {
-            provider: 'deepseek',
+            provider: 'default_zhipu',
             apiKey: '',
             apiUrl: '',
-            model: 'deepseek-chat',
+            model: 'glm-4',
             apiKeys: {
+                default_zhipu: '',
                 deepseek: '',
                 openai: '',
                 zhipu: '',
@@ -38,7 +39,7 @@ class AIService {
             }
         };
 
-        const provider = normalized.provider || 'deepseek';
+        const provider = normalized.provider || 'default_zhipu';
 
         // 兼容旧版：只有apiKey时，把它迁移到当前provider名下
         if (rawConfig.apiKey && !normalized.apiKeys[provider]) {
@@ -73,7 +74,7 @@ class AIService {
      */
     saveConfig(config) {
         const current = this.getCurrentConfig();
-        const targetProvider = config.provider || current.provider || 'deepseek';
+        const targetProvider = config.provider || current.provider || 'default_zhipu';
         const merged = {
             ...current,
             ...config,
@@ -108,7 +109,7 @@ class AIService {
      */
     getProviderApiKey(provider = null) {
         const config = this.getCurrentConfig();
-        const targetProvider = provider || config.provider || 'deepseek';
+        const targetProvider = provider || config.provider || 'default_zhipu';
         return (config.apiKeys && config.apiKeys[targetProvider]) || '';
     }
 
@@ -134,12 +135,13 @@ class AIService {
      */
     getApiUrl(config = this.getCurrentConfig()) {
         const urls = {
+            'default_zhipu': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
             'deepseek': 'https://api.deepseek.com/v1/chat/completions',
             'openai': 'https://api.openai.com/v1/chat/completions',
             'zhipu': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
             'custom': config.apiUrl
         };
-        return urls[config.provider] || urls['deepseek'];
+        return urls[config.provider] || urls['default_zhipu'];
     }
 
     /**
@@ -581,7 +583,7 @@ Negative constraints: ${negativeInstruction}.`;
         let apiUrl;
         let requestBody;
 
-        if (config.provider === 'zhipu') {
+        if (config.provider === 'zhipu' || config.provider === 'default_zhipu') {
             // 智谱AI - CogView
             apiUrl = 'https://open.bigmodel.cn/api/paas/v4/images/generations';
             requestBody = {

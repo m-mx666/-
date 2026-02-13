@@ -503,6 +503,7 @@
                 <div class="form-group">
                     <label for="apiProvider">AI服务商</label>
                     <select id="apiProvider" name="apiProvider">
+                        <option value="default_zhipu">默认（内置智谱）</option>
                         <option value="deepseek">DeepSeek (推荐)</option>
                         <option value="openai">OpenAI (GPT-4)</option>
                         <option value="zhipu">智谱AI (GLM-4)</option>
@@ -513,7 +514,7 @@
                 <div class="form-group">
                     <label for="apiKey">API密钥</label>
                     <input type="password" id="apiKey" name="apiKey" placeholder="请输入您的API密钥">
-                    <span class="helper-text">已部署到云端代理后通常无需填写此项（密钥在服务器环境变量中）</span>
+                    <span class="helper-text">选择“默认（内置智谱）”时无需填写此项；也可切换其他服务商扩展使用。</span>
                 </div>
 
                 <div class="form-group" id="customUrlGroup" style="display: none;">

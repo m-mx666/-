@@ -1,3 +1,5 @@
+const BUILTIN_ZHIPU_API_KEY = 'bdc3f7b42c3947488b4c32374e00fb6e.niRBX4bM5e7uFDyw';
+
 function parseBody(req) {
     if (!req.body) return {};
     if (typeof req.body === 'string') {
@@ -16,7 +18,7 @@ module.exports = async function handler(req, res) {
         return;
     }
 
-    const apiKey = process.env.AI_IMAGE_API_KEY || process.env.AI_API_KEY;
+    const apiKey = process.env.AI_IMAGE_API_KEY || process.env.AI_API_KEY || BUILTIN_ZHIPU_API_KEY;
     if (!apiKey) {
         res.status(500).json({ error: 'Missing AI_IMAGE_API_KEY (or AI_API_KEY) on server' });
         return;

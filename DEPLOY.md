@@ -11,8 +11,8 @@
 ## 3. Set environment variables
 - In project settings -> `Environment Variables`, add:
 - `AI_API_KEY` (required): your chat model key.
-- `AI_BASE_URL` (optional): default `https://api.deepseek.com/v1/chat/completions`.
-- `AI_CHAT_MODEL` (optional): default `deepseek-chat`.
+- `AI_BASE_URL` (optional): default `https://open.bigmodel.cn/api/paas/v4/chat/completions`.
+- `AI_CHAT_MODEL` (optional): default `glm-4`.
 - `AI_MAX_TOKENS` (optional): default `2000`.
 - `AI_IMAGE_API_KEY` (optional): image model key (if omitted, uses `AI_API_KEY`).
 - `AI_IMAGE_BASE_URL` (optional): default `https://open.bigmodel.cn/api/paas/v4/images/generations`.

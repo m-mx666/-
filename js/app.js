@@ -212,12 +212,13 @@ class App {
      */
     getDefaultModel(provider) {
         const defaultModels = {
+            'default_zhipu': 'glm-4',
             'deepseek': 'deepseek-chat',
             'openai': 'gpt-4',
             'zhipu': 'glm-4',
             'custom': 'gpt-4'
         };
-        return defaultModels[provider] || 'deepseek-chat';
+        return defaultModels[provider] || 'glm-4';
     }
 
     /**
@@ -265,6 +266,7 @@ class App {
      */
     resolveEffectiveApiUrl(config) {
         const urlMap = {
+            'default_zhipu': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
             'deepseek': 'https://api.deepseek.com/v1/chat/completions',
             'openai': 'https://api.openai.com/v1/chat/completions',
             'zhipu': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
@@ -275,7 +277,7 @@ class App {
             return '未设置（请先填写自定义API地址）';
         }
 
-        return urlMap[config.provider] || urlMap['deepseek'];
+        return urlMap[config.provider] || urlMap['default_zhipu'];
     }
 
     /**
@@ -724,11 +726,11 @@ class App {
         const config = aiService.getCurrentConfig();
 
         // 填充当前配置
-        document.getElementById('apiProvider').value = config.provider || 'deepseek';
-        document.getElementById('apiKey').value = aiService.getProviderApiKey(config.provider || 'deepseek');
+        document.getElementById('apiProvider').value = config.provider || 'default_zhipu';
+        document.getElementById('apiKey').value = aiService.getProviderApiKey(config.provider || 'default_zhipu');
         document.getElementById('apiUrl').value = config.apiUrl || '';
-        document.getElementById('apiModel').value = config.model || this.getDefaultModel(config.provider || 'deepseek');
-        this.handleProviderChange(config.provider || 'deepseek', false);
+        document.getElementById('apiModel').value = config.model || this.getDefaultModel(config.provider || 'default_zhipu');
+        this.handleProviderChange(config.provider || 'default_zhipu', false);
         this.updateActualApiUrlDisplay(config);
 
         // 隐藏测试结果
