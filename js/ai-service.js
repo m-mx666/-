@@ -495,34 +495,35 @@ class AIService {
      * 构建图像生成提示词（智谱AI CogView）
      */
     buildImagePrompt(formData) {
-        // 风格映射：优先强调“3岁幼儿涂鸦感”，弱化专业插画感
+        // 风格映射：强调“极简幼儿画”，控制线条数量
         const styleMap = {
-            '彩铅': '3岁幼儿彩铅涂鸦风，蜡笔/马克笔质感，少量不均匀上色',
-            '水彩': '3岁幼儿水彩涂抹风，颜色轻微外溢，笔触稚拙',
-            '彩铅水彩混合': '3岁幼儿彩铅+水彩混合涂鸦风，线条与涂抹都较随意',
-            '黑白': 'simple black and white line drawing, toddler doodle style, white background, no shading, no colors'
+            '彩铅': '极简3岁幼儿彩铅涂鸦，平涂色块，线条数量很少',
+            '水彩': '极简3岁幼儿水彩涂抹，少量色块，线条数量很少',
+            '彩铅水彩混合': '极简3岁幼儿涂鸦混合风，少线条+少色块',
+            '黑白': 'ultra simple black and white toddler doodle, very few lines, white background, no shading'
         };
 
-        // 线条映射：增加抖动、笨拙、原始感
+        // 线条映射：优先“少线条”
         const lineMap = {
-            '粗': 'thick black outlines, naive and shaky strokes',
-            '细': 'thin but shaky childlike lines, uneven hand-drawn strokes'
+            '粗': 'thick black outlines, naive and shaky strokes, very few strokes',
+            '细': 'thin childlike lines, uneven hand-drawn strokes, very few strokes'
         };
 
         const style = styleMap[formData.drawingStyle] || '3岁幼儿简笔涂鸦风';
         const line = lineMap[formData.drawingLine] || 'naive and shaky strokes';
 
         const colorInstruction = formData.drawingStyle === '黑白'
-            ? '只保留黑白线稿，不要灰阶明暗，不要任何彩色'
-            : '颜色使用幼儿涂鸦常见的简单配色，避免精细渐变与写实光影';
+            ? '只保留黑白线稿，不要灰阶，不要阴影，不要彩色'
+            : '仅用2-4种简单颜色做平涂色块，不要渐变，不要光影，不要纹理细节';
 
         // 负向约束：明确排除“成人专业插画”特征
-        const negativeInstruction = '禁止写实、禁止3D、禁止照片风、禁止复杂透视、禁止精细解剖、禁止高细节背景、禁止专业排线';
+        const negativeInstruction = '禁止写实、禁止3D、禁止照片风、禁止复杂透视、禁止精细解剖、禁止高细节背景、禁止专业排线、禁止复杂场景';
+        const minimalInstruction = '线条数量控制在极少水平，主体以圆形头部和简单肢体为主，类似幼儿园小朋友随手画';
 
         return `画面主体：${formData.drawingDesc}。
-风格要求：${style}，${line}，childlike and primitive art，crayon or marker sketch texture。
-年龄感要求：看起来像3岁小朋友亲手画的，比例可略夸张，形状简化，允许不稳定和笨拙感。
-构图要求：主体居中，白色背景，元素尽量少，画面简洁。
+风格要求：${style}，${line}，childlike and primitive art。
+年龄感要求：看起来像3岁小朋友亲手画的，比例可略夸张，形状简化，允许不稳定和笨拙感，${minimalInstruction}。
+构图要求：主体居中，白色背景，只画必要元素，不加背景装饰，不加多余道具。
 色彩要求：${colorInstruction}。
 约束要求：${negativeInstruction}。`;
     }
