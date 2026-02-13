@@ -495,37 +495,56 @@ class AIService {
      * 构建图像生成提示词（智谱AI CogView）
      */
     buildImagePrompt(formData) {
-        // 风格映射：强调“极简幼儿画”，控制线条数量
+        // 强约束模板：避免模型自动“美化”为成人线稿
         const styleMap = {
-            '彩铅': '极简3岁幼儿彩铅涂鸦，平涂色块，线条数量很少',
-            '水彩': '极简3岁幼儿水彩涂抹，少量色块，线条数量很少',
-            '彩铅水彩混合': '极简3岁幼儿涂鸦混合风，少线条+少色块',
-            '黑白': 'ultra simple black and white toddler doodle, very few lines, white background, no shading'
+            '彩铅': '3岁儿童蜡笔涂鸦风，稚拙简化，平涂色块',
+            '水彩': '3岁儿童随手水彩涂抹风，形状简化',
+            '彩铅水彩混合': '3岁儿童随手涂鸦混合风，线条和色块都很少',
+            '黑白': 'simple black and white toddler doodle style'
         };
 
-        // 线条映射：优先“少线条”
         const lineMap = {
-            '粗': 'thick black outlines, naive and shaky strokes, very few strokes',
-            '细': 'thin childlike lines, uneven hand-drawn strokes, very few strokes'
+            '粗': 'thick uneven marker lines',
+            '细': 'thin but shaky childlike lines'
         };
 
-        const style = styleMap[formData.drawingStyle] || '3岁幼儿简笔涂鸦风';
-        const line = lineMap[formData.drawingLine] || 'naive and shaky strokes';
+        const style = styleMap[formData.drawingStyle] || '3岁儿童简笔涂鸦风';
+        const line = lineMap[formData.drawingLine] || 'thick uneven marker lines';
 
         const colorInstruction = formData.drawingStyle === '黑白'
-            ? '只保留黑白线稿，不要灰阶，不要阴影，不要彩色'
-            : '仅用2-4种简单颜色做平涂色块，不要渐变，不要光影，不要纹理细节';
+            ? 'black and white only, no gray shading, no color'
+            : 'use only 2-4 flat colors, no gradients, no rendering, no realistic lighting';
 
-        // 负向约束：明确排除“成人专业插画”特征
-        const negativeInstruction = '禁止写实、禁止3D、禁止照片风、禁止复杂透视、禁止精细解剖、禁止高细节背景、禁止专业排线、禁止复杂场景';
-        const minimalInstruction = '线条数量控制在极少水平，主体以圆形头部和简单肢体为主，类似幼儿园小朋友随手画';
+        // 用“数量上限”压缩线条复杂度
+        const structureInstruction = [
+            'head must be a single simple circle',
+            'eyes are two dots, mouth is one short curved line',
+            'hair uses at most 3-5 simple strokes, no hair details',
+            'arms and legs are single lines or very simple shapes',
+            'hands without finger details',
+            'props (like bowl/spoon) use simple geometric outlines only',
+            'total visual elements must be very few'
+        ].join(', ');
 
-        return `画面主体：${formData.drawingDesc}。
-风格要求：${style}，${line}，childlike and primitive art。
-年龄感要求：看起来像3岁小朋友亲手画的，比例可略夸张，形状简化，允许不稳定和笨拙感，${minimalInstruction}。
-构图要求：主体居中，白色背景，只画必要元素，不加背景装饰，不加多余道具。
-色彩要求：${colorInstruction}。
-约束要求：${negativeInstruction}。`;
+        // 强负向，防止出现你截图里的精细线稿
+        const negativeInstruction = [
+            'no realistic anatomy',
+            'no manga style',
+            'no anime style',
+            'no sketch hatching',
+            'no cross-hatching',
+            'no detailed facial features',
+            'no complex clothing folds',
+            'no perspective background',
+            'no high detail'
+        ].join(', ');
+
+        return `Subject: ${formData.drawingDesc}.
+Style: ${style}, ${line}, childlike and primitive art, like a real 3-year-old drawing.
+Composition: centered single character, plain white background, minimal objects.
+Structure constraints: ${structureInstruction}.
+Color constraints: ${colorInstruction}.
+Negative constraints: ${negativeInstruction}.`;
     }
 
     /**
