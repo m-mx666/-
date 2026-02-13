@@ -515,6 +515,21 @@ class AIService {
             ? 'black and white only, no gray shading, no color'
             : 'use only 2-4 flat colors, no gradients, no rendering, no realistic lighting';
 
+        // 场景约束：禁止“纸上摆拍”风
+        const sceneInstruction = [
+            'output only the doodle itself',
+            'plain white background only',
+            'no paper texture',
+            'no notebook',
+            'no pencil',
+            'no pen',
+            'no crayon objects',
+            'no hand holding pen',
+            'no desk',
+            'no real photo setup',
+            'not a photo of a drawing'
+        ].join(', ');
+
         // 用“数量上限”压缩线条复杂度
         const structureInstruction = [
             'head must be a single simple circle',
@@ -536,7 +551,8 @@ class AIService {
             'no detailed facial features',
             'no complex clothing folds',
             'no perspective background',
-            'no high detail'
+            'no high detail',
+            'no stationery items around the drawing'
         ].join(', ');
 
         return `Subject: ${formData.drawingDesc}.
@@ -544,6 +560,7 @@ Style: ${style}, ${line}, childlike and primitive art, like a real 3-year-old dr
 Composition: centered single character, plain white background, minimal objects.
 Structure constraints: ${structureInstruction}.
 Color constraints: ${colorInstruction}.
+Scene constraints: ${sceneInstruction}.
 Negative constraints: ${negativeInstruction}.`;
     }
 
