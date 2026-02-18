@@ -506,8 +506,8 @@ class AIService {
         };
 
         const lineMap = {
-            '粗': 'thick uneven marker lines',
-            '细': 'thin but shaky childlike lines'
+            '粗': 'thick shaky childlike lines, uneven pressure, slight wobble, imperfect strokes',
+            '细': 'thin shaky childlike lines, uneven pressure, slight wobble, imperfect strokes'
         };
 
         const style = styleMap[formData.drawingStyle] || '3岁儿童简笔涂鸦风';
@@ -540,7 +540,9 @@ class AIService {
             'arms and legs are single lines or very simple shapes',
             'hands without finger details',
             'props (like bowl/spoon) use simple geometric outlines only',
-            'total visual elements must be very few'
+            'total visual elements must be very few',
+            'lines should be slightly wobbly and uneven, like a 3-4 year old drawing',
+            'avoid perfectly straight lines; use slight bends and overshoots'
         ].join(', ');
 
         // 强负向，防止出现你截图里的精细线稿
@@ -554,7 +556,9 @@ class AIService {
             'no complex clothing folds',
             'no perspective background',
             'no high detail',
-            'no stationery items around the drawing'
+            'no stationery items around the drawing',
+            'no ruler-straight lines',
+            'no perfect symmetry'
         ].join(', ');
 
         return `Subject: ${formData.drawingDesc}.
