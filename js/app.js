@@ -53,6 +53,12 @@ class App {
                 this.switchTool(tool);
             });
         });
+        const mobileToolSelect = document.getElementById('mobileToolSelect');
+        if (mobileToolSelect) {
+            mobileToolSelect.addEventListener('change', (e) => {
+                this.switchTool(e.target.value);
+            });
+        }
 
         // 自主游戏观察表表单提交
         const observationForm = document.getElementById('observationForm');
@@ -305,6 +311,10 @@ class App {
                 btn.classList.remove('active');
             }
         });
+        const mobileToolSelect = document.getElementById('mobileToolSelect');
+        if (mobileToolSelect) {
+            mobileToolSelect.value = toolType;
+        }
 
         // 隐藏所有表单卡片
         document.getElementById('step1').style.display = 'none';

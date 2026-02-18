@@ -11,7 +11,7 @@
     <header class="header">
         <div class="container">
             <h1 class="logo">🎨 幼师偷懒神器</h1>
-            <nav class="nav">
+            <nav class="nav" id="toolNav">
                 <button class="nav-btn active" data-tool="observation">自主游戏观察表</button>
                 <button class="nav-btn" data-tool="course">月课程生成器</button>
                 <button class="nav-btn" data-tool="case">游戏案例生成器</button>
@@ -20,6 +20,15 @@
                 <button class="nav-btn" data-tool="oneOnOne">一对一倾听</button>
                 <button class="nav-btn" data-tool="drawing">表征小人绘画器</button>
             </nav>
+            <select class="nav-select" id="mobileToolSelect">
+                <option value="observation">自主游戏观察表</option>
+                <option value="course">月课程生成器</option>
+                <option value="case">游戏案例生成器</option>
+                <option value="story">课程故事生成器</option>
+                <option value="storyDesign">课程故事设计</option>
+                <option value="oneOnOne">一对一倾听</option>
+                <option value="drawing">表征小人绘画器</option>
+            </select>
             <button class="settings-btn" id="settingsBtn">⚙️ 豆包服务状态</button>
         </div>
     </header>
