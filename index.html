@@ -20,7 +20,7 @@
                 <button class="nav-btn" data-tool="oneOnOne">一对一倾听</button>
                 <button class="nav-btn" data-tool="drawing">表征小人绘画器</button>
             </nav>
-            <button class="settings-btn" id="settingsBtn">⚙️ 服务状态</button>
+            <button class="settings-btn" id="settingsBtn">⚙️ 豆包服务状态</button>
         </div>
     </header>
 
@@ -283,7 +283,6 @@
                                 <option value="社会">社会</option>
                                 <option value="科学">科学</option>
                                 <option value="艺术">艺术</option>
-                                <option value="综合">综合</option>
                             </select>
                             <span class="error-message"></span>
                         </div>
@@ -484,9 +483,7 @@
                     <!-- AI生成的内容将显示在这里 -->
                 </div>
                 <div class="result-actions">
-                    <button class="btn btn-secondary" id="copyBtn">📋 复制文本</button>
-                    <button class="btn btn-secondary" id="exportPdfBtn">📄 导出PDF</button>
-                    <button class="btn btn-secondary" id="exportWordBtn">📝 导出Word</button>
+                    <button class="btn btn-secondary" id="copyBtn">📋 复制内容</button>
                     <button class="btn btn-primary" id="regenerateBtn">🔄 重新生成</button>
                 </div>
             </div>
@@ -497,25 +494,22 @@
     <div class="modal" id="settingsModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>API配置</h3>
+                <h3>豆包服务状态</h3>
                 <button class="modal-close" id="closeModal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="apiProvider">AI服务商</label>
+                    <label for="apiProvider">服务模式</label>
                     <select id="apiProvider" name="apiProvider">
-                        <option value="default_zhipu">默认（内置智谱）</option>
-                        <option value="deepseek">DeepSeek (推荐)</option>
-                        <option value="openai">OpenAI (GPT-4)</option>
-                        <option value="zhipu">智谱AI (GLM-4)</option>
+                        <option value="default_zhipu">豆包云端代理（默认）</option>
                         <option value="custom">自定义服务</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="apiKey">API密钥</label>
-                    <input type="password" id="apiKey" name="apiKey" placeholder="请输入您的API密钥">
-                    <span class="helper-text">选择“默认（内置智谱）”时无需填写此项；也可切换其他服务商扩展使用。</span>
+                    <label for="apiKey">本地API密钥（可选）</label>
+                    <input type="password" id="apiKey" name="apiKey" placeholder="仅在自定义服务时需要">
+                    <span class="helper-text">当前默认使用豆包云端代理，无需本地配置。</span>
                 </div>
 
                 <div class="form-group" id="customUrlGroup" style="display: none;">
@@ -546,10 +540,6 @@
 
     <!-- Toast提示 -->
     <div class="toast" id="toast"></div>
-
-    <!-- 引入外部库 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.min.js"></script>
 
     <!-- 引入JavaScript -->
     <script src="js/ai-service.js"></script>

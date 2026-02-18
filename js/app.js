@@ -138,16 +138,6 @@ class App {
             this.handleCopy();
         });
 
-        // 导出PDF
-        document.getElementById('exportPdfBtn').addEventListener('click', () => {
-            this.handleExportPdf();
-        });
-
-        // 导出Word
-        document.getElementById('exportWordBtn').addEventListener('click', () => {
-            this.handleExportWord();
-        });
-
         // 设置按钮
         document.getElementById('settingsBtn').addEventListener('click', () => {
             this.showSettingsModal();
@@ -212,7 +202,7 @@ class App {
      */
     getDefaultModel(provider) {
         const defaultModels = {
-            'default_zhipu': 'glm-4',
+            'default_zhipu': 'doubao-seed-1-8-251228',
             'deepseek': 'deepseek-chat',
             'openai': 'gpt-4',
             'zhipu': 'glm-4',
@@ -266,7 +256,7 @@ class App {
      */
     resolveEffectiveApiUrl(config) {
         const urlMap = {
-            'default_zhipu': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+            'default_zhipu': 'https://ark.cn-beijing.volces.com/api/v3/chat/completions',
             'deepseek': 'https://api.deepseek.com/v1/chat/completions',
             'openai': 'https://api.openai.com/v1/chat/completions',
             'zhipu': 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
@@ -515,13 +505,18 @@ class App {
             return;
         }
 
-        // 如果是图片结果（仅绘画工具）
-        if (this.currentTool === 'drawing' && this.currentResult.imageUrl) {
-            this.showToast('图片无法复制，请右键点击图片保存', 'info');
-            return;
-        }
-
         try {
+            if (this.currentTool === 'drawing' && this.currentResult.imageUrl) {
+                const promptText = this.currentResult.revisedPrompt || this.currentResult.prompt || '';
+                if (!promptText) {
+                    this.showToast('暂无可复制的提示词', 'warning');
+                    return;
+                }
+                await navigator.clipboard.writeText(promptText);
+                this.showToast('提示词已复制到剪贴板', 'success');
+                return;
+            }
+
             const textContent = typeof this.currentResult === 'string' ? this.currentResult : this.currentResult.content || '';
             await navigator.clipboard.writeText(textContent);
             this.showToast('已复制到剪贴板', 'success');
@@ -529,193 +524,6 @@ class App {
             console.error('复制失败:', error);
             this.showToast('复制失败,请手动复制', 'error');
         }
-    }
-
-    /**
-     * 处理导出PDF
-     */
-    async handleExportPdf() {
-        if (!this.currentResult) {
-            this.showToast('没有可导出的内容', 'warning');
-            return;
-        }
-
-        // 检查库是否加载
-        if (typeof html2pdf === 'undefined') {
-            this.showToast('PDF导出库加载失败，请刷新页面重试', 'error');
-            return;
-        }
-
-        try {
-            const resultContent = document.getElementById('resultContent');
-
-            // 生成文件名（使用工具类型和时间戳）
-            const toolNames = {
-                'observation': '观察表',
-                'course': '月课程',
-                'case': '游戏案例',
-                'story': '课程故事',
-                'storyDesign': '课程故事设计',
-                'oneOnOne': '一对一倾听记录',
-                'drawing': '表征小人描述'
-            };
-            const timestamp = new Date().toISOString().split('T')[0];
-            const filename = `${toolNames[this.currentTool]}_${timestamp}.pdf`;
-
-            // 配置PDF选项
-            const options = {
-                margin: [10, 10, 10, 10],
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            // 显示提示
-            this.showToast('正在生成PDF...', 'info');
-
-            // 生成PDF
-            await html2pdf().set(options).from(resultContent).save();
-
-            this.showToast('PDF导出成功！', 'success');
-        } catch (error) {
-            console.error('PDF导出失败:', error);
-            this.showToast('PDF导出失败：' + error.message, 'error');
-        }
-    }
-
-    /**
-     * 处理导出Word
-     */
-    async handleExportWord() {
-        if (!this.currentResult) {
-            this.showToast('没有可导出的内容', 'warning');
-            return;
-        }
-
-        // 检查库是否加载
-        if (typeof docx === 'undefined') {
-            this.showToast('Word导出库加载失败，请刷新页面重试', 'error');
-            return;
-        }
-
-        try {
-            const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
-
-            // 解析 Markdown 内容为段落
-            const paragraphs = this.parseMarkdownToDocx(this.currentResult);
-
-            // 创建文档
-            const doc = new Document({
-                sections: [{
-                    properties: {},
-                    children: paragraphs
-                }]
-            });
-
-            // 显示提示
-            this.showToast('正在生成Word文档...', 'info');
-
-            // 生成 blob
-            const blob = await Packer.toBlob(doc);
-
-            // 生成文件名
-            const toolNames = {
-                'observation': '观察表',
-                'course': '月课程',
-                'case': '游戏案例',
-                'story': '课程故事',
-                'storyDesign': '课程故事设计',
-                'oneOnOne': '一对一倾听记录',
-                'drawing': '表征小人描述'
-            };
-            const timestamp = new Date().toISOString().split('T')[0];
-            const filename = `${toolNames[this.currentTool]}_${timestamp}.docx`;
-
-            // 下载文件
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            link.click();
-            URL.revokeObjectURL(link.href);
-
-            this.showToast('Word导出成功！', 'success');
-        } catch (error) {
-            console.error('Word导出失败:', error);
-            this.showToast('Word导出失败：' + error.message, 'error');
-        }
-    }
-
-    /**
-     * 将 Markdown 内容解析为 docx 段落
-     */
-    parseMarkdownToDocx(markdown) {
-        const { Paragraph, TextRun, HeadingLevel } = docx;
-        const lines = markdown.split('\n');
-        const paragraphs = [];
-
-        for (let line of lines) {
-            line = line.trim();
-            if (!line) continue;
-
-            // 一级标题
-            if (line.startsWith('# ')) {
-                paragraphs.push(new Paragraph({
-                    text: line.substring(2),
-                    heading: HeadingLevel.HEADING_1,
-                    spacing: { before: 200, after: 100 }
-                }));
-            }
-            // 二级标题
-            else if (line.startsWith('## ')) {
-                paragraphs.push(new Paragraph({
-                    text: line.substring(3),
-                    heading: HeadingLevel.HEADING_2,
-                    spacing: { before: 150, after: 80 }
-                }));
-            }
-            // 三级标题
-            else if (line.startsWith('### ')) {
-                paragraphs.push(new Paragraph({
-                    text: line.substring(4),
-                    heading: HeadingLevel.HEADING_3,
-                    spacing: { before: 100, after: 60 }
-                }));
-            }
-            // 列表项
-            else if (line.startsWith('- ') || /^\d+\.\s/.test(line)) {
-                const text = line.replace(/^[-\d]+\.\s/, '');
-                paragraphs.push(new Paragraph({
-                    text: '  • ' + text,
-                    spacing: { before: 50, after: 50 }
-                }));
-            }
-            // 粗体文本
-            else if (line.includes('**')) {
-                const parts = line.split('**');
-                const children = [];
-                for (let i = 0; i < parts.length; i++) {
-                    if (i % 2 === 0) {
-                        if (parts[i]) children.push(new TextRun(parts[i]));
-                    } else {
-                        children.push(new TextRun({ text: parts[i], bold: true }));
-                    }
-                }
-                paragraphs.push(new Paragraph({
-                    children: children,
-                    spacing: { before: 80, after: 80 }
-                }));
-            }
-            // 普通段落
-            else {
-                paragraphs.push(new Paragraph({
-                    text: line,
-                    spacing: { before: 80, after: 80 }
-                }));
-            }
-        }
-
-        return paragraphs;
     }
 
     /**

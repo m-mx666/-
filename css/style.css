@@ -488,6 +488,14 @@ body {
 
 /* ==================== 响应式设计 ==================== */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 14px;
+    }
+
+    .header {
+        padding: 10px 0;
+    }
+
     .header .container {
         flex-direction: column;
         align-items: stretch;
@@ -499,13 +507,22 @@ body {
     }
 
     .nav {
-        justify-content: center;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+        gap: 8px;
     }
 
     .nav-btn {
-        flex: 1;
-        min-width: 100px;
+        flex: 0 0 auto;
+        min-width: 96px;
         font-size: 12px;
+    }
+
+    .nav::-webkit-scrollbar {
+        display: none;
     }
 
     .settings-btn {
@@ -545,9 +562,13 @@ body {
 }
 
 @media (max-width: 480px) {
+    .main-content {
+        padding: 20px 0;
+    }
+
     .card {
         border-radius: 8px;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
 
     .card-header {
@@ -559,7 +580,7 @@ body {
     }
 
     .result-content {
-        padding: 20px 15px;
+        padding: 18px 14px;
     }
 
     .btn {
