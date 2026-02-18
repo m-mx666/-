@@ -10,9 +10,9 @@
 
 ## 3. Set environment variables
 - In project settings -> `Environment Variables`, add:
-- `AI_API_KEY` (required): your chat model key.
-- `AI_BASE_URL` (optional): default `https://open.bigmodel.cn/api/paas/v4/chat/completions`.
-- `AI_CHAT_MODEL` (optional): default `glm-4`.
+- `AI_API_KEY` (required): your Ark (Doubao) API key.
+- `AI_BASE_URL` (optional): default `https://ark.cn-beijing.volces.com/api/v3/chat/completions`.
+- `AI_CHAT_MODEL` (required): your Ark endpoint ID (example: `ep-xxxxxxxxxxxxxxxx`).
 - `AI_MAX_TOKENS` (optional): default `2000`.
 - `AI_IMAGE_API_KEY` (optional): image model key (if omitted, uses `AI_API_KEY`).
 - `AI_IMAGE_BASE_URL` (optional): default `https://open.bigmodel.cn/api/paas/v4/images/generations`.
